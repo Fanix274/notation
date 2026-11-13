@@ -1,0 +1,35 @@
+{
+  "metadata": {
+    "kernelspec": {
+      "name": "python",
+      "display_name": "Python (Pyodide)",
+      "language": "python"
+    },
+    "language_info": {
+      "codemirror_mode": {
+        "name": "python",
+        "version": 3
+      },
+      "file_extension": ".py",
+      "mimetype": "text/x-python",
+      "name": "python",
+      "nbconvert_exporter": "python",
+      "pygments_lexer": "ipython3",
+      "version": "3.8"
+    }
+  },
+  "nbformat_minor": 5,
+  "nbformat": 4,
+  "cells": [
+    {
+      "id": "094d03fa-7751-48a2-acfd-504086fccf10",
+      "cell_type": "code",
+      "source": "import numpy as np\nimport matplotlib.pyplot as plt\n\n# ---------- Coefficients ----------\ncoefs = {\n    \"UE1\": {\"R101\": 10, \"R102\": 10, \"R103\": 7, \"R104\": 7, \"R106\": 5, \"R108\": 6, \"R110\": 5,\n            \"R111\": 4, \"R112\": 2, \"R113\": 5, \"R114\": 5, \"SAE11\": 20, \"SAE12\": 20, \"SAE16\": 7},\n    \"UE2\": {\"R101\": 4, \"R103\": 2, \"R104\": 8, \"R105\": 6, \"R110\": 5, \"R111\": 5, \"R112\": 2,\n            \"R113\": 9, \"R114\": 9, \"R115\": 3, \"SAE13\": 29, \"SAE16\": 7},\n    \"UE3\": {\"R101\": 4, \"R103\": 2, \"R106\": 5, \"R107\": 15, \"R108\": 6, \"R109\": 4, \"R110\": 5,\n            \"R111\": 5, \"R112\": 2, \"R115\": 3, \"SAE14\": 20, \"SAE15\": 20, \"SAE16\": 7},\n}\n\n# ---------- Tes notes (remplace par les tiennes) ----------\nnotes = {\"R101\": 12, \"R102\": 9, \"R103\": 14, \"R104\": 8, \"R105\": 11, \"R106\": 10,\n         \"R107\": 15, \"R108\": 7, \"R109\": 13, \"R110\": 12, \"R111\": 14, \"R112\": 16,\n         \"R113\": 9, \"R114\": 10, \"R115\": 12, \"SAE11\": 13, \"SAE12\": 11,\n         \"SAE13\": 8, \"SAE14\": 14, \"SAE15\": 15, \"SAE16\": 12}\n\n# ---------- Calcul des moyennes ----------\nmoyennes = {}\nfor ue in coefs:\n    liste_notes = []\n    liste_coefs = []\n    for nom in coefs[ue]:\n        if nom in notes:\n            liste_notes.append(notes[nom])\n            liste_coefs.append(coefs[ue][nom])\n    moyennes[ue] = round(np.average(liste_notes, weights=liste_coefs), 2)\n\nprint(moyennes)\n\n# ---------- Diagramme en barres ----------\nnoms_ue = list(moyennes.keys())\nvaleurs = np.array(list(moyennes.values()))\n\ncouleurs = []\nfor v in valeurs:\n    if v < 8:\n        couleurs.append(\"red\")\n    elif v < 10:\n        couleurs.append(\"orange\")\n    else:\n        couleurs.append(\"green\")\n\nplt.bar(noms_ue, valeurs, color=couleurs)\nplt.axhline(10, color=\"black\", linestyle=\"--\")\nplt.axhline(8, color=\"gray\", linestyle=\":\")\nplt.ylim(0, 20)\nplt.ylabel(\"Moyenne /20\")\nplt.title(\"Moyennes des UE\")\nplt.show()\n\n# ---------- Décision du jury ----------\nnb_valides = np.sum(valeurs >= 10)\nplus_faible = np.min(valeurs)\n\nif nb_valides == 3:\n    print(\"Année validée : passage en BUT 2 autorisé.\")\nelif nb_valides == 2 and plus_faible >= 8:\n    print(\"Année non validée, mais passage en BUT 2 autorisé : il faudra valider la dernière UE en BUT 2.\")\nelif nb_valides == 2:\n    print(\"Année non validée et passage en BUT 2 non autorisé : un redoublement peut être proposé.\")\nelse:\n    print(\"Année non validée : passage en BUT 2 exclu.\")",
+      "metadata": {
+        "trusted": true
+      },
+      "outputs": [],
+      "execution_count": null
+    }
+  ]
+}
